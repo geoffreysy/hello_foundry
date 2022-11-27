@@ -6,19 +6,33 @@ import "../src/Counter.sol";
 
 contract CounterTest is Helper {
     Counter public counter;
+    address public owner;
+    address public receiver;
+
+    constructor() {
+        owner = testGlobalUsers[0];
+        receiver = testGlobalUsers[1];
+    }
 
     function setUp() public {
+        vm.prank(owner);
         counter = new Counter();
-        counter.setNumber(0);
+
+        assertEq(counter.balanceOf(owner), 1000 ether);
     }
 
-    function testIncrement() public {
-        counter.increment();
-        assertEq(counter.number(), 1);
+    /**
+        Test transfer with fuzziness
+     */
+    function testTransfer(uint amount) public {
+        vm.assume(amount > 1 ether);
+        vm.assume(amount < 1000 ether);
+ 
+        vm.prank(owner);
+        counter.transfer(receiver, amount);
+ 
+        assertEq(counter.balanceOf(owner), 1000 ether - amount);
+        assertEq(counter.balanceOf(receiver), amount);
     }
 
-    function testSetNumber(uint256 x) public {
-        counter.setNumber(x);
-        assertEq(counter.number(), x);
-    }
 }

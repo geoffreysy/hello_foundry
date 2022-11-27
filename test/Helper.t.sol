@@ -4,7 +4,7 @@ pragma solidity 0.8.17;
 import "forge-std/Test.sol";
 
 contract Helper is Test {
-    address payable[] public testGlobalUsers;
+    address payable[] internal testGlobalUsers;
 
     uint private constant NUM_USERS = 10;
     bytes32 private nextUser = keccak256(abi.encodePacked("user address"));
